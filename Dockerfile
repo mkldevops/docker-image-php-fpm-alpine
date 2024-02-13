@@ -1,8 +1,11 @@
 #syntax=docker/dockerfile:1.4
 
+ARG PHP_VERSION=8.3
+
+
 FROM mlocati/php-extension-installer:latest AS php_extension_installer
 
-FROM php:8.2-fpm-alpine
+FROM php:${PHP_VERSION}-fpm-alpine
 
 WORKDIR /srv/app
 
