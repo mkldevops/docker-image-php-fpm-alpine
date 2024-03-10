@@ -2,7 +2,6 @@ name: Docker Image CI
 
 on:
   push:
-    tags: "*"
 
 jobs:
   build:
@@ -18,10 +17,20 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set tag to build
+        run: |
+          tag=${{github.ref}}
+          if [[ $tag == 'refs/tags/'* ]]; then
+              tag=$(echo $tag | sed -e 's/refs\/tags\///')
+          else if [[ $tag == 'refs/heads/main' ]]; then
+              tag=latest
+          fi
+          echo "TAG=$tag" >> $GITHUB_ENV
       - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+        if: github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v5
         with:
           platforms: linux/amd64, linux/arm64
-          build-args: PHP_VERSION=${{github.ref_name}}
+          target: prod
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{env.REPOSITORY_NAME}}:${{github.ref_name}}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{env.REPOSITORY_NAME}}:${{env.TAG}}
