@@ -19,18 +19,22 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Set tag to build
         run: |
-          tag=${{github.ref}}
-          if [[ $tag == 'refs/tags/'* ]]; then
-              tag=$(echo $tag | sed -e 's/refs\/tags\///')
-          elif [[ $tag == 'refs/heads/main' ]]; then
+          tag=$(echo ${{github.ref}} | sed -e 's/refs\/heads\///')
+          if [[ ${{github.ref}} == 'refs/tags/'* ]]; then
+              tag=$(echo ${{github.ref}} | sed -e 's/refs\/tags\///')
+          elif [[ ${{github.ref}} == 'refs/heads/main' ]]; then
               tag=latest
           fi
           echo "TAG=$tag" >> $GITHUB_ENV
+      - # Add support for more platforms with QEMU (optional)
+        # https://github.com/docker/setup-qemu-action
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
       - name: Build and push Docker image
-        if: github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v5
         with:
           platforms: linux/amd64, linux/arm64
-          target: prod
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{env.REPOSITORY_NAME}}:${{env.TAG}}
