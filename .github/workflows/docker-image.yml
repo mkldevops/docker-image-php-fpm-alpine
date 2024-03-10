@@ -36,6 +36,5 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           platforms: linux/amd64, linux/arm64
-          target: prod
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{env.REPOSITORY_NAME}}:${{env.TAG}}
