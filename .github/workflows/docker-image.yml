@@ -22,7 +22,7 @@ jobs:
           tag=${{github.ref}}
           if [[ $tag == 'refs/tags/'* ]]; then
               tag=$(echo $tag | sed -e 's/refs\/tags\///')
-          else if [[ $tag == 'refs/heads/main' ]]; then
+          elif [[ $tag == 'refs/heads/main' ]]; then
               tag=latest
           fi
           echo "TAG=$tag" >> $GITHUB_ENV
