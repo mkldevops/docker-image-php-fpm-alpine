@@ -19,10 +19,10 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Set tag to build
         run: |
-          tag=${{github.ref}}
-          if [[ $tag == 'refs/tags/'* ]]; then
-              tag=$(echo $tag | sed -e 's/refs\/tags\///')
-          elif [[ $tag == 'refs/heads/main' ]]; then
+          tag=$(echo ${{github.ref}} | sed -e 's/refs\/heads\///')
+          if [[ ${{github.ref}} == 'refs/tags/'* ]]; then
+              tag=$(echo ${{github.ref}} | sed -e 's/refs\/tags\///')
+          elif [[ ${{github.ref}} == 'refs/heads/main' ]]; then
               tag=latest
           fi
           echo "TAG=$tag" >> $GITHUB_ENV
